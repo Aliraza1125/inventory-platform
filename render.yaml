@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: inventory-platform-backend
+    runtime: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false
+      - key: FRONTEND_ORIGIN
+        sync: false
+      - key: SQUARE_ENV
+        value: sandbox
+      - key: SQUARE_ACCESS_TOKEN
+        sync: false
+      - key: SQUARE_LOCATION_ID
+        sync: false
+      - key: SQUARE_CLIENT_ID
+        sync: false
+      - key: SQUARE_CLIENT_SECRET
+        sync: false
+      - key: SQUARE_REDIRECT_URI
+        sync: false
+      - key: SQUARE_WEBHOOK_SIGNATURE_KEY
+        sync: false
+      - key: SQUARE_WEBHOOK_NOTIFICATION_URL
+        sync: false
+      - key: TOAST_MODE
+        value: mock
