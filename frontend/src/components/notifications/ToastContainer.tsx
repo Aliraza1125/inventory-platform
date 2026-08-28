@@ -5,7 +5,7 @@ import { dismiss, selectNotifications, type Notification, type NotificationKind 
 const KIND_STYLES: Record<NotificationKind, string> = {
   success: 'border-emerald-500/40 bg-emerald-950 text-emerald-100',
   error: 'border-red-500/40 bg-red-950 text-red-100',
-  info: 'border-slate-500/40 bg-slate-800 text-slate-100',
+  info: 'border-line bg-surface-3 text-ink',
 };
 
 /** Owns its own dismiss timer so one toast's lifetime is unaffected by others arriving/leaving. */

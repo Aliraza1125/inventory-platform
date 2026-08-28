@@ -8,11 +8,7 @@ export interface CreateProductDTO {
   sku: string;
   description?: string;
   quantity?: number;
-}
-
-export interface UpdateProductDTO {
-  name?: string;
-  description?: string;
+  price: number; // minor currency units (cents)
 }
 
 export const inventoryService = {
@@ -24,11 +20,15 @@ export const inventoryService = {
     if (existing) {
       throw AppError.conflict(`A product with SKU "${dto.sku.toUpperCase()}" already exists.`, 'DUPLICATE_SKU');
     }
+    if (dto.price === undefined || dto.price === null || dto.price < 0) {
+      throw AppError.badRequest('A non-negative price is required.', 'VALIDATION_ERROR');
+    }
     return productRepository.create({
       name: dto.name.trim(),
       sku: dto.sku.trim().toUpperCase(),
       description: dto.description?.trim() ?? '',
       quantity: dto.quantity ?? 0,
+      price: dto.price,
     });
   },
 
@@ -64,14 +64,6 @@ export const inventoryService = {
       allocations,
       transactions,
     };
-  },
-
-  async updateProduct(id: string, dto: UpdateProductDTO) {
-    const product = await productRepository.updateById(id, dto);
-    if (!product) {
-      throw AppError.notFound('Product not found.', 'PRODUCT_NOT_FOUND');
-    }
-    return product;
   },
 
   async deleteProduct(id: string) {

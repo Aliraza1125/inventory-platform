@@ -19,7 +19,7 @@ async function connectMockToast() {
 describe('allocationService.allocate', () => {
   it('creates a POS catalog product and records the allocation', async () => {
     await connectMockToast();
-    const product = await inventoryService.createProduct({ name: 'Coca Cola', sku: 'COKE-001', quantity: 100 });
+    const product = await inventoryService.createProduct({ name: 'Coca Cola', sku: 'COKE-001', quantity: 100, price: 250 });
 
     const allocation = await allocationService.allocate({
       productId: String(product._id),
@@ -33,7 +33,7 @@ describe('allocationService.allocate', () => {
 
   it('rejects allocating more than total stock', async () => {
     await connectMockToast();
-    const product = await inventoryService.createProduct({ name: 'Coca Cola', sku: 'COKE-001', quantity: 10 });
+    const product = await inventoryService.createProduct({ name: 'Coca Cola', sku: 'COKE-001', quantity: 10, price: 250 });
 
     await expect(
       allocationService.allocate({ productId: String(product._id), posProvider: 'toast', quantity: 50 }),
@@ -41,7 +41,7 @@ describe('allocationService.allocate', () => {
   });
 
   it('rejects allocating to a POS that is not connected', async () => {
-    const product = await inventoryService.createProduct({ name: 'Coca Cola', sku: 'COKE-001', quantity: 10 });
+    const product = await inventoryService.createProduct({ name: 'Coca Cola', sku: 'COKE-001', quantity: 10, price: 250 });
 
     await expect(
       allocationService.allocate({ productId: String(product._id), posProvider: 'toast', quantity: 5 }),
@@ -50,7 +50,7 @@ describe('allocationService.allocate', () => {
 
   it('reuses the existing POS product id on a second allocation to the same provider', async () => {
     await connectMockToast();
-    const product = await inventoryService.createProduct({ name: 'Coca Cola', sku: 'COKE-001', quantity: 100 });
+    const product = await inventoryService.createProduct({ name: 'Coca Cola', sku: 'COKE-001', quantity: 100, price: 250 });
 
     const first = await allocationService.allocate({
       productId: String(product._id),

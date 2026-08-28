@@ -57,11 +57,11 @@ export function MockToastTerminal() {
       </p>
       <div className="flex flex-wrap items-end gap-3">
         <label className="block">
-          <span className="mb-1 block text-xs font-medium text-slate-400">Product</span>
+          <span className="mb-1 block text-xs font-medium text-ink-muted">Product</span>
           <select
             value={productId}
             onChange={(e) => setProductId(e.target.value)}
-            className="rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none focus:border-sky-500"
+            className="rounded-lg border border-line bg-canvas px-3 py-2 text-sm text-ink outline-none focus:border-brand"
           >
             {products.map((p) => (
               <option key={p._id} value={p._id}>
@@ -71,13 +71,13 @@ export function MockToastTerminal() {
           </select>
         </label>
         <label className="block">
-          <span className="mb-1 block text-xs font-medium text-slate-400">Qty</span>
+          <span className="mb-1 block text-xs font-medium text-ink-muted">Qty</span>
           <input
             type="number"
             min={1}
             value={quantity}
             onChange={(e) => setQuantity(e.target.value)}
-            className="w-20 rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none focus:border-sky-500"
+            className="w-20 rounded-lg border border-line bg-canvas px-3 py-2 text-sm text-ink outline-none focus:border-brand"
           />
         </label>
         <button
@@ -95,16 +95,16 @@ export function MockToastTerminal() {
             {result.status === 'processed' ? 'Sale Completed' : 'Duplicate — Already Processed'}
           </Badge>
           {result.productQuantityBefore !== undefined && (
-            <span className="font-mono text-slate-300">
+            <span className="font-mono text-ink-muted">
               Inventory {result.productQuantityBefore} → {result.productQuantityAfter}
             </span>
           )}
           {result.allocationBefore !== undefined && (
-            <span className="font-mono text-slate-300">
+            <span className="font-mono text-ink-muted">
               Toast Allocation {result.allocationBefore} → {result.allocationAfter}
             </span>
           )}
-          <span className="font-mono text-xs text-slate-500">{result.transaction.externalTransactionId}</span>
+          <span className="font-mono text-xs text-ink-faint">{result.transaction.externalTransactionId}</span>
         </div>
       )}
     </div>

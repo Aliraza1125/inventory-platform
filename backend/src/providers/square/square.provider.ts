@@ -160,7 +160,7 @@ export class SquareProvider implements POSProvider {
   // webhook for this order arrives, same as any other sale.
   async createTestSale(
     ctx: POSConnectionContext,
-    input: { posProductId: string; locationId: string; quantity: number; unitPriceCents?: number },
+    input: { posProductId: string; locationId: string; quantity: number; unitPriceCents: number },
   ): Promise<{ orderId: string; paymentId: string; paymentStatus?: string; totalMoney: string }> {
     const client = requireClient(ctx);
     try {
@@ -172,7 +172,7 @@ export class SquareProvider implements POSProvider {
             {
               catalogObjectId: input.posProductId,
               quantity: String(input.quantity),
-              basePriceMoney: { amount: BigInt(input.unitPriceCents ?? 100), currency: 'USD' },
+              basePriceMoney: { amount: BigInt(input.unitPriceCents), currency: 'USD' },
             },
           ],
         },

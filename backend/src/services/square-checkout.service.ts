@@ -54,7 +54,12 @@ export const squareCheckoutService = {
 
     const result = await squareProvider.createTestSale(
       { connectionId: String(connection._id), accessToken: connection.accessToken, locationId: connection.locationId },
-      { posProductId: allocation.posProductId, locationId: connection.locationId!, quantity: dto.quantity },
+      {
+        posProductId: allocation.posProductId,
+        locationId: connection.locationId!,
+        quantity: dto.quantity,
+        unitPriceCents: product.price,
+      },
     );
 
     return { ...result, productName: product.name };

@@ -36,29 +36,29 @@ export function Dashboard() {
         <StatCard label="Recent Sales" value={summary?.recentSales.length ?? 0} hint="Last 10 transactions" />
       </div>
 
-      <div className="mt-8 rounded-xl border border-slate-800 bg-slate-900/60">
-        <div className="flex items-center justify-between border-b border-slate-800 px-5 py-4">
-          <h2 className="text-sm font-semibold text-slate-200">Recent Sales & Inventory Changes</h2>
-          <Link to="/sales" className="text-xs font-medium text-sky-400 hover:text-sky-300">
+      <div className="mt-8 rounded-xl border border-line bg-surface">
+        <div className="flex items-center justify-between border-b border-line px-5 py-4">
+          <h2 className="text-sm font-semibold text-ink">Recent Sales & Inventory Changes</h2>
+          <Link to="/sales" className="text-xs font-medium text-brand-ink hover:text-brand">
             View all
           </Link>
         </div>
-        <div className="divide-y divide-slate-800">
+        <div className="divide-y divide-line">
           {summary?.recentSales.length === 0 && (
-            <p className="px-5 py-6 text-sm text-slate-500">
+            <p className="px-5 py-6 text-sm text-ink-faint">
               No sales yet. Connect a POS and allocate inventory to get started.
             </p>
           )}
           {summary?.recentSales.map((tx) => (
             <div key={tx._id} className="flex items-center justify-between px-5 py-3 text-sm">
               <div>
-                <p className="font-medium text-slate-200">{productLabel(tx.productId)}</p>
-                <p className="text-xs text-slate-500">
+                <p className="font-medium text-ink">{productLabel(tx.productId)}</p>
+                <p className="text-xs text-ink-faint">
                   {tx.provider} · {tx.externalTransactionId}
                 </p>
               </div>
               <div className="flex items-center gap-3">
-                <span className="text-slate-400">
+                <span className="text-ink-muted">
                   {tx.type} · {tx.quantity} units
                 </span>
                 <Badge variant={tx.status === 'COMPLETED' ? 'success' : 'danger'}>{tx.status}</Badge>

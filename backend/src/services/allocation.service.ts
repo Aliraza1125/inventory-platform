@@ -30,7 +30,6 @@ export const allocationService = {
         'ALLOCATION_EXCEEDS_STOCK',
       );
     }
-
     const connection = await posConnectionRepository.findByProviderWithSecrets(dto.posProvider);
     if (!connection || connection.status !== 'connected') {
       throw AppError.badRequest(
@@ -57,6 +56,7 @@ export const allocationService = {
         name: product.name,
         sku: product.sku,
         description: product.description,
+        price: product.price,
       });
       posProductId = created.id;
       logger.info('Created POS catalog product', { provider: dto.posProvider, posProductId });

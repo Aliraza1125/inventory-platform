@@ -11,7 +11,7 @@ afterAll(teardownTestDatabase);
 afterEach(clearTestDatabase);
 
 async function seedCokeWithAllocation(quantity: number, allocatedQuantity: number) {
-  const product = await Product.create({ name: 'Coca Cola', sku: 'COKE-001', quantity });
+  const product = await Product.create({ name: 'Coca Cola', sku: 'COKE-001', quantity, price: 250 });
   await InventoryAllocation.create({
     productId: product._id,
     posProvider: 'square',

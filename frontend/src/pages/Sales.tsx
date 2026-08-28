@@ -23,9 +23,9 @@ export function Sales() {
     <div>
       <PageHeader title="Sales / Transactions" description="Every SALE, RESTOCK, and ADJUSTMENT recorded on the platform." />
 
-      <div className="overflow-hidden rounded-xl border border-slate-800">
+      <div className="overflow-hidden rounded-xl border border-line">
         <table className="w-full text-sm">
-          <thead className="bg-slate-900/80 text-left text-xs uppercase tracking-wide text-slate-400">
+          <thead className="bg-surface-2 text-left text-xs uppercase tracking-wide text-ink-muted">
             <tr>
               <th className="px-4 py-3">POS</th>
               <th className="px-4 py-3">Product</th>
@@ -36,15 +36,15 @@ export function Sales() {
               <th className="px-4 py-3">Status</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-800 bg-slate-950/40">
+          <tbody className="divide-y divide-line bg-canvas/50">
             {transactions.map((tx) => (
               <tr key={tx._id}>
-                <td className="px-4 py-3 capitalize text-slate-200">{tx.provider}</td>
-                <td className="px-4 py-3 text-slate-300">{productLabel(tx.productId)}</td>
-                <td className="px-4 py-3 text-slate-400">{tx.type}</td>
-                <td className="px-4 py-3 text-right text-slate-200">{tx.quantity}</td>
-                <td className="px-4 py-3 font-mono text-xs text-slate-500">{tx.externalTransactionId}</td>
-                <td className="px-4 py-3 text-slate-500">{new Date(tx.processedAt).toLocaleString()}</td>
+                <td className="px-4 py-3 capitalize text-ink">{tx.provider}</td>
+                <td className="px-4 py-3 text-ink-muted">{productLabel(tx.productId)}</td>
+                <td className="px-4 py-3 text-ink-muted">{tx.type}</td>
+                <td className="px-4 py-3 text-right text-ink">{tx.quantity}</td>
+                <td className="px-4 py-3 font-mono text-xs text-ink-faint">{tx.externalTransactionId}</td>
+                <td className="px-4 py-3 text-ink-faint">{new Date(tx.processedAt).toLocaleString()}</td>
                 <td className="px-4 py-3">
                   <Badge variant={tx.status === 'COMPLETED' ? 'success' : 'danger'}>{tx.status}</Badge>
                 </td>
@@ -52,7 +52,7 @@ export function Sales() {
             ))}
             {transactions.length === 0 && (
               <tr>
-                <td colSpan={7} className="px-4 py-8 text-center text-slate-500">
+                <td colSpan={7} className="px-4 py-8 text-center text-ink-faint">
                   No transactions yet.
                 </td>
               </tr>

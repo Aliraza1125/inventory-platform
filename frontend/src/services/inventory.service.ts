@@ -14,6 +14,7 @@ export const createProduct = async (product: {
   sku: string;
   description?: string;
   quantity: number;
+  price: number;
 }): Promise<Product> => fetchPost<Product>(BASE, {}, product);
 
 export const restockProduct = async (id: string, quantity: number): Promise<Product> =>

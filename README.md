@@ -6,6 +6,22 @@ Mode** since no Toast developer credentials were available). It shows the comple
 connect a POS → create inventory → allocate inventory to the POS → a sale happens on the POS →
 the platform detects it → inventory is depleted automatically, atomically, and idempotently.
 
+## Live Demo
+
+| | |
+| --- | --- |
+| **Frontend** | https://inventory-platform-omega.vercel.app |
+| **Backend API** | https://inventory-platform-huue.onrender.com |
+
+Both are live, connected to the same MongoDB Atlas cluster, with Square genuinely connected to
+a sandbox account and a real webhook subscription registered against the Render URL. The
+**Square Checkout** page is the fastest way to see the whole loop: pick a product, click **Buy
+Now**, and watch the page confirm the real webhook-driven depletion on its own within a few
+seconds — no refresh, no terminal (see §6/§20 for how it works under the hood).
+
+> Backend is on Render's free tier, which sleeps after inactivity — the first request after a
+> while may take 20-50s to wake up. Hit `/health` once before demoing if it's been idle.
+
 - [1. Project Overview](#1-project-overview)
 - [2. Architecture Diagram](#2-architecture-diagram)
 - [3. Technology Choices](#3-technology-choices)
@@ -258,18 +274,22 @@ slash) fails every verification.
 ### Triggering a real sandbox sale
 
 The real [Square Point of Sale app is not supported in Sandbox](https://developer.squareup.com/docs/devtools/sandbox/overview)
-(confirmed against current docs), so there's no physical/app terminal to tap. Two ways to
-trigger a genuine sandbox sale instead — both are processed by Square's own servers, not by
-this platform:
+(confirmed against current docs), so there's no physical/app terminal to tap. Three ways to
+trigger a genuine sandbox sale instead — all processed by Square's own servers, not by this
+platform's inventory logic:
 
-1. **Square's own Sandbox Dashboard.** Developer Console → your app → Sandbox test account →
-   **Square Dashboard** → look for **Create Order** / **Take a payment**. Availability of this
-   UI has varied over time per Square's own developer forum, so check what your account has;
-   if present, this is the closest thing to literally ringing up a sale on Square's own POS
-   interface.
-2. **`npm run square:test-sale`** (in `backend/`) — a standalone script, deliberately kept
-   outside this platform's own API, that creates a real Order + Payment against your sandbox
-   using Square's documented test nonce (`cnon:card-nonce-ok`):
+1. **Square Checkout page** (in this app, `/checkout`) — the primary way to demo this. It lists
+   every product allocated to Square and lets you "buy" one. Clicking **Buy Now** calls
+   `POST /api/pos/square/checkout` → `SquareProvider.createTestSale()`, which creates a real
+   Order + Payment using Square's documented test nonce (`cnon:card-nonce-ok`). That request
+   **only** talks to Square — it never touches our inventory. The page then polls and shows the
+   real webhook-driven depletion landing on its own, so the "customer bought something" and "our
+   platform noticed" steps stay genuinely separate, just both inside one page for convenience.
+2. **Square's own Sandbox Dashboard.** Developer Console → your app → Sandbox test account →
+   **Square Dashboard** → look for **Create Order** / **Take a payment**, if your account has it
+   — the closest thing to literally ringing up a sale on Square's own POS interface.
+3. **`npm run square:test-sale`** (in `backend/`) — the same mechanism as the Checkout page, as
+   a standalone script for scripting a demo or debugging without a browser:
 
    ```bash
    npm run square:test-sale -- --variationId=<square catalog id> --locationId=<square location id> --quantity=2
@@ -570,30 +590,33 @@ Square and allocates 30 units there too.
 
 ## 20. Demonstrating the Full Workflow
 
-### Path A — Square, fully live (the primary demo)
+### Path A — Square, fully live, in the browser (the primary demo)
 
-1. `npm run dev` in `backend/` and `frontend/`. Set `SQUARE_ACCESS_TOKEN` in `backend/.env`
-   (§16/§6), then restart the backend.
-2. Start `ngrok http 4000` and register the webhook subscription + signature key in Square's
-   Developer Console (§6 "Setting up real webhook delivery").
-3. Open `http://localhost:3000` → **POS Connections** → **Connect Square**. Status flips to
-   **Connected (Live)** — this is a real `LocationsApi.listLocations()` call against Square.
-4. **Inventory** → **Create Product** (e.g. Coca Cola, `COKE-001`, quantity 100).
-5. **Allocate** → Square, quantity 50. This calls Square's real Catalog API to create the item
+On the deployed site (see "Live Demo" above), or locally once Square + a webhook tunnel/deploy
+are set up (§6):
+
+1. **POS Connections** → confirm Square shows **Connected (Live)**.
+2. **Inventory** → **Create Product** (e.g. Coca Cola, `COKE-001`, quantity 100).
+3. **Allocate** → Square, quantity 50. This calls Square's real Catalog API to create the item
    and the Inventory API to set its sandbox stock count.
-6. Trigger a real sale (§6 "Triggering a real sandbox sale") — either Square's own Sandbox
-   Dashboard, or:
-   ```bash
-   cd backend && npm run square:test-sale -- --variationId=<from the product's POS Allocations table> --locationId=<from POS Connections> --quantity=2
-   ```
-7. Within a few seconds, Square delivers a real webhook to `/api/webhooks/square`. Refresh the
-   **Dashboard** / **Inventory** / **Sales** pages — Coca Cola shows `100 → 98`, the Square
-   allocation shows `50 → 48`, and a `SALE` transaction appears with Square's own order/line-item
-   id as its external id. Nothing on the platform's own UI triggered this — it was detected.
-8. Run the same test-sale script again with a fresh order — Square generates a new order id
-   each time, so each is a distinct transaction. To see idempotency directly, replay a captured
-   webhook payload at `/api/webhooks/square` with the same body twice — the second response
-   shows `"status": "duplicate"` and inventory is unchanged.
+4. **Square Checkout** → find that product's card, set a quantity, click **Buy Now**. This
+   creates a real Order + Payment on Square's sandbox (`squareCheckoutService`,
+   `SquareProvider.createTestSale`) — inventory is **not** touched by this click.
+5. Watch the page itself: within a few seconds it polls, detects the change, and flips to
+   **"Confirmed via real Square webhook"** with the exact before → after numbers. That
+   confirmation is the actual real webhook → `SaleEventService.process()` → MongoDB path — the
+   button only started a real Square transaction, it never simulated the depletion.
+6. Cross-check on **Dashboard** / **Inventory** / **Sales** — the same numbers, plus a `SALE`
+   transaction whose external id is Square's own real order/line-item id.
+7. Buy the same product again — a fresh order id each time, so each is a distinct transaction.
+   To see idempotency directly, replay a captured `/api/webhooks/square` payload with the same
+   body twice — the second response shows `"status": "duplicate"` and inventory is unchanged.
+
+**Without a browser** (e.g. scripting a demo, or webhook debugging), the same real-transaction
+step is available via `backend/scripts/square-test-sale.ts`:
+```bash
+cd backend && npm run square:test-sale -- --variationId=<from the product's POS Allocations table> --locationId=<from POS Connections> --quantity=2
+```
 
 ### Path B — Toast, mocked (secondary, honestly labeled)
 

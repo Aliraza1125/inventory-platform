@@ -13,7 +13,7 @@ afterEach(clearTestDatabase);
 describe('salesService.simulateSale', () => {
   it('drives the same inventory logic a real webhook would, end to end', async () => {
     await posConnectionRepository.upsertConnected('toast', { mode: 'mock', locationId: 'mock-location' });
-    const product = await inventoryService.createProduct({ name: 'Coca Cola', sku: 'COKE-001', quantity: 100 });
+    const product = await inventoryService.createProduct({ name: 'Coca Cola', sku: 'COKE-001', quantity: 100, price: 250 });
     await allocationService.allocate({ productId: String(product._id), posProvider: 'toast', quantity: 50 });
 
     const result = await salesService.simulateSale({
@@ -34,7 +34,7 @@ describe('salesService.simulateSale', () => {
 
   it('rejects simulating a sale for a product with no allocation on that POS', async () => {
     await posConnectionRepository.upsertConnected('toast', { mode: 'mock', locationId: 'mock-location' });
-    const product = await inventoryService.createProduct({ name: 'Coca Cola', sku: 'COKE-001', quantity: 100 });
+    const product = await inventoryService.createProduct({ name: 'Coca Cola', sku: 'COKE-001', quantity: 100, price: 250 });
 
     await expect(
       salesService.simulateSale({ productId: String(product._id), posProvider: 'toast', quantity: 2 }),
@@ -42,7 +42,7 @@ describe('salesService.simulateSale', () => {
   });
 
   it('refuses to simulate a sale for Square, since Square is a live provider and must use real webhooks', async () => {
-    const product = await inventoryService.createProduct({ name: 'Coca Cola', sku: 'COKE-001', quantity: 100 });
+    const product = await inventoryService.createProduct({ name: 'Coca Cola', sku: 'COKE-001', quantity: 100, price: 250 });
 
     await expect(
       salesService.simulateSale({ productId: String(product._id), posProvider: 'square', quantity: 2 }),

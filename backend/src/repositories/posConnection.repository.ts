@@ -35,9 +35,15 @@ export const posConnectionRepository = {
   },
 
   markDisconnected(provider: POSProviderName) {
+    // Clears merchant/location identity too, not just credentials — a disconnected connection
+    // shouldn't show stale "current" account info, especially since reconnecting (or a future
+    // OAuth flow) could land on a different merchant/location entirely.
     return POSConnection.findOneAndUpdate(
       { provider },
-      { $set: { status: 'disconnected' }, $unset: { accessToken: '', refreshToken: '' } },
+      {
+        $set: { status: 'disconnected' },
+        $unset: { accessToken: '', refreshToken: '', merchantId: '', locationId: '', locationName: '' },
+      },
       { new: true },
     );
   },

@@ -18,11 +18,6 @@ export const inventoryController = {
     res.json({ data: result });
   }),
 
-  update: asyncHandler(async (req: Request, res: Response) => {
-    const product = await inventoryService.updateProduct(req.params.id, req.body);
-    res.json({ data: product });
-  }),
-
   remove: asyncHandler(async (req: Request, res: Response) => {
     await inventoryService.deleteProduct(req.params.id);
     res.status(204).send();

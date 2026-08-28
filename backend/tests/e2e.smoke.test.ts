@@ -13,7 +13,7 @@ describe('End-to-end HTTP flow (full app wiring, not just services)', () => {
   it('walks the full demo flow: create product -> connect mock toast -> allocate -> simulate sale -> dashboard reflects it', async () => {
     const createRes = await request(app)
       .post('/api/inventory')
-      .send({ name: 'Coca Cola', sku: 'COKE-001', quantity: 100 })
+      .send({ name: 'Coca Cola', sku: 'COKE-001', quantity: 100, price: 250 })
       .expect(201);
     const productId = createRes.body.data._id;
     expect(createRes.body.data.quantity).toBe(100);
@@ -63,7 +63,7 @@ describe('POST /api/webhooks/toast — raw-body parsing + idempotency over real 
   async function setupProductWithToastAllocation() {
     const createRes = await request(app)
       .post('/api/inventory')
-      .send({ name: 'Coca Cola', sku: 'COKE-001', quantity: 100 })
+      .send({ name: 'Coca Cola', sku: 'COKE-001', quantity: 100, price: 250 })
       .expect(201);
     const productId = createRes.body.data._id;
 

@@ -1,17 +1,34 @@
 @import "tailwindcss";
 
-:root {
-  --background: #020617;
-  --foreground: #e2e8f0;
-}
+@theme {
+  /* Neutral surface scale — a considered blue-charcoal, not default Tailwind slate */
+  --color-canvas: #0a0d12;
+  --color-surface: #12161d;
+  --color-surface-2: #171c26;
+  --color-surface-3: #1e2430;
+  --color-line: #242b38;
+  --color-line-soft: #1a202b;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-ink: #edeff3;
+  --color-ink-muted: #8992a3;
+  --color-ink-faint: #5b6577;
+
+  /* Single brand accent — used for primary actions, active nav, links */
+  --color-brand: #6d6af6;
+  --color-brand-hover: #8280f8;
+  --color-brand-soft: #1c1b3a;
+  --color-brand-ink: #c7c5fd;
+
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+* {
+  font-variant-numeric: tabular-nums;
 }

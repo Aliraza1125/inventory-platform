@@ -8,6 +8,7 @@ export interface Product {
   sku: string;
   description?: string;
   quantity: number;
+  price: number; // minor currency units (cents)
   allocatedQuantity: number;
   availableQuantity: number;
   createdAt: string;

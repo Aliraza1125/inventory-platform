@@ -43,10 +43,10 @@ export function ConnectionCard({ connection, children }: { connection: POSConnec
   }
 
   return (
-    <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-6">
+    <div className="rounded-xl border border-line bg-surface p-6">
       <div className="flex items-start justify-between">
         <div>
-          <h3 className="text-lg font-semibold text-slate-50">{PROVIDER_LABEL[connection.provider]}</h3>
+          <h3 className="text-lg font-semibold text-ink">{PROVIDER_LABEL[connection.provider]}</h3>
           {connection.provider === 'toast' && connection.mode === 'mock' && (
             <p className="mt-1 text-xs text-amber-400">
               Simulated integration — no live Toast API calls are made.
@@ -56,23 +56,29 @@ export function ConnectionCard({ connection, children }: { connection: POSConnec
         {statusBadge(connection)}
       </div>
 
-      <dl className="mt-4 space-y-1 text-sm text-slate-400">
-        <div className="flex justify-between">
-          <dt>Location</dt>
-          <dd className="text-slate-300">{connection.locationName ?? connection.locationId ?? '—'}</dd>
-        </div>
-        <div className="flex justify-between">
-          <dt>Merchant</dt>
-          <dd className="text-slate-300">{connection.merchantId ?? '—'}</dd>
-        </div>
-      </dl>
+      {connection.status === 'connected' && (connection.locationName || connection.locationId || connection.merchantId) && (
+        <dl className="mt-4 space-y-1 text-sm text-ink-muted">
+          {(connection.locationName || connection.locationId) && (
+            <div className="flex justify-between">
+              <dt>Location</dt>
+              <dd className="text-ink-muted">{connection.locationName ?? connection.locationId}</dd>
+            </div>
+          )}
+          {connection.merchantId && (
+            <div className="flex justify-between">
+              <dt>Merchant</dt>
+              <dd className="text-ink-muted">{connection.merchantId}</dd>
+            </div>
+          )}
+        </dl>
+      )}
 
       <div className="mt-5 flex gap-2">
         {connection.status === 'connected' ? (
           <button
             onClick={disconnect}
             disabled={busy}
-            className="rounded-lg border border-slate-700 px-3 py-2 text-sm font-medium text-slate-300 hover:bg-slate-800 disabled:opacity-50"
+            className="rounded-lg border border-line px-3 py-2 text-sm font-medium text-ink-muted hover:bg-surface-2 disabled:opacity-50"
           >
             Disconnect
           </button>
@@ -80,7 +86,7 @@ export function ConnectionCard({ connection, children }: { connection: POSConnec
           <button
             onClick={connect}
             disabled={busy}
-            className="rounded-lg bg-sky-600 px-3 py-2 text-sm font-medium text-white hover:bg-sky-500 disabled:opacity-50"
+            className="rounded-lg bg-brand px-3 py-2 text-sm font-medium text-white hover:bg-brand-hover disabled:opacity-50"
           >
             Connect {PROVIDER_LABEL[connection.provider]}
           </button>

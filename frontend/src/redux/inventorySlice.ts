@@ -10,7 +10,6 @@ export const restockProductThunk = createAsyncThunk(
   'inventory/restockProduct',
   ({ id, quantity }: { id: string; quantity: number }) => restockProduct(id, quantity),
 );
-
 interface InventoryState {
   items: Product[];
   current: ProductDetail | null;

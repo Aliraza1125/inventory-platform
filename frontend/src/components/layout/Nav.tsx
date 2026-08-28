@@ -4,16 +4,21 @@ const LINKS = [
   { to: '/', label: 'Dashboard', end: true },
   { to: '/pos', label: 'POS Connections', end: false },
   { to: '/inventory', label: 'Inventory', end: false },
-  { to: '/checkout', label: 'Square Checkout', end: false },
+  { to: '/checkout', label: 'Store', end: false },
   { to: '/sales', label: 'Sales', end: false },
 ];
 
 export function Nav() {
   return (
-    <aside className="w-60 shrink-0 border-r border-slate-800 bg-slate-950 px-4 py-6">
-      <div className="mb-8 px-2">
-        <p className="text-sm font-semibold tracking-wide text-slate-50">Inventory Platform</p>
-        <p className="text-xs text-slate-500">POS Integration Demo</p>
+    <aside className="flex w-64 shrink-0 flex-col border-r border-line bg-surface px-4 py-6">
+      <div className="mb-8 flex items-center gap-3 px-2">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand text-sm font-bold text-white">
+          IP
+        </div>
+        <div>
+          <p className="text-sm font-semibold leading-tight text-ink">Inventory Platform</p>
+          <p className="text-xs leading-tight text-ink-faint">Operations Console</p>
+        </div>
       </div>
       <nav className="flex flex-col gap-1">
         {LINKS.map((link) => (
@@ -22,8 +27,8 @@ export function Nav() {
             to={link.to}
             end={link.end}
             className={({ isActive }) =>
-              `rounded-lg px-3 py-2 text-sm font-medium transition ${
-                isActive ? 'bg-slate-800 text-slate-50' : 'text-slate-400 hover:bg-slate-900 hover:text-slate-200'
+              `rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                isActive ? 'bg-brand-soft text-brand-ink' : 'text-ink-muted hover:bg-surface-2 hover:text-ink'
               }`
             }
           >

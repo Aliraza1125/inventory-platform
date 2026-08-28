@@ -2,7 +2,7 @@ import { FilterQuery } from 'mongoose';
 import { Product, IProduct } from '../models/Product';
 
 export const productRepository = {
-  create(data: Pick<IProduct, 'name' | 'sku' | 'description' | 'quantity'>) {
+  create(data: Pick<IProduct, 'name' | 'sku' | 'description' | 'quantity' | 'price'>) {
     return Product.create(data);
   },
 
@@ -16,10 +16,6 @@ export const productRepository = {
 
   findBySku(sku: string) {
     return Product.findOne({ sku: sku.toUpperCase() });
-  },
-
-  updateById(id: string, update: Partial<Pick<IProduct, 'name' | 'description'>>) {
-    return Product.findByIdAndUpdate(id, update, { new: true, runValidators: true });
   },
 
   deleteById(id: string) {

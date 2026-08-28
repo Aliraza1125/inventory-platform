@@ -6,6 +6,8 @@ export interface IProduct extends Document {
   sku: string;
   description?: string;
   quantity: number;
+  // Minor currency units (cents).
+  price: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -16,6 +18,7 @@ const productSchema = new Schema<IProduct>(
     sku: { type: String, required: true, trim: true, unique: true, uppercase: true },
     description: { type: String, trim: true, default: '' },
     quantity: { type: Number, required: true, default: 0, min: 0 },
+    price: { type: Number, required: true, min: 0 },
   },
   { timestamps: true },
 );
