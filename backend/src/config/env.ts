@@ -9,7 +9,9 @@ function optional(name: string, fallback = ''): string {
 export const env = {
   port: Number(optional('PORT', '4000')),
   nodeEnv: optional('NODE_ENV', 'development'),
-  frontendOrigin: optional('FRONTEND_ORIGIN', 'http://localhost:3000'),
+  // CORS origin comparisons are exact-match, so a trailing slash (an easy copy-paste mistake
+  // from a browser address bar) would silently break every request — strip it defensively.
+  frontendOrigin: optional('FRONTEND_ORIGIN', 'http://localhost:3000').replace(/\/+$/, ''),
 
   mongodbUri: optional('MONGODB_URI', 'mongodb://127.0.0.1:27017/inventory_platform'),
 
