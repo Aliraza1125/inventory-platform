@@ -4,6 +4,7 @@ const LINKS = [
   { to: '/', label: 'Dashboard', end: true },
   { to: '/pos', label: 'POS Connections', end: false },
   { to: '/inventory', label: 'Inventory', end: false },
+  { to: '/checkout', label: 'Square Checkout', end: false },
   { to: '/sales', label: 'Sales', end: false },
 ];
 

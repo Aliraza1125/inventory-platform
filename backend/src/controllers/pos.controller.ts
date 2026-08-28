@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { posConnectionService } from '../services/pos-connection.service';
+import { squareCheckoutService } from '../services/square-checkout.service';
 import { asyncHandler } from '../middleware/asyncHandler';
 import { AppError } from '../utils/AppError';
 import { POSProviderName } from '../models/POSConnection';
@@ -54,5 +55,13 @@ export const posController = {
     }
     const connection = await posConnectionService.completeSquareOAuth(code);
     res.json({ data: connection });
+  }),
+
+  squareCheckout: asyncHandler(async (req: Request, res: Response) => {
+    const result = await squareCheckoutService.buy({
+      productId: req.body.productId,
+      quantity: Number(req.body.quantity),
+    });
+    res.status(201).json({ data: result });
   }),
 };

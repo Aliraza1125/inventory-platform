@@ -1,5 +1,12 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { allocate, connectProvider, disconnectProvider, getAllocations, getConnections } from '@/services/pos.service';
+import {
+  allocate,
+  connectProvider,
+  disconnectProvider,
+  getAllocations,
+  getConnections,
+  squareCheckout,
+} from '@/services/pos.service';
 import type { InventoryAllocation, POSConnectionSummary, POSProviderName } from '@/types';
 import type { RootState } from './store';
 
@@ -14,6 +21,10 @@ export const fetchAllocations = createAsyncThunk('pos/fetchAllocations', getAllo
 export const allocateThunk = createAsyncThunk(
   'pos/allocate',
   (payload: { productId: string; posProvider: POSProviderName; quantity: number }) => allocate(payload),
+);
+export const squareCheckoutThunk = createAsyncThunk(
+  'pos/squareCheckout',
+  (payload: { productId: string; quantity: number }) => squareCheckout(payload),
 );
 
 interface PosState {

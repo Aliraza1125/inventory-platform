@@ -1,7 +1,7 @@
 import { API_BASE_URL } from '@/consts/config';
 import fetchGet from '@/utilities/fetchGet';
 import fetchPost from '@/utilities/fetchPost';
-import type { InventoryAllocation, POSConnectionSummary, POSProviderName } from '@/types';
+import type { InventoryAllocation, POSConnectionSummary, POSProviderName, SquareCheckoutResult } from '@/types';
 
 const BASE = `${API_BASE_URL}/pos`;
 const ALLOCATIONS_BASE = `${API_BASE_URL}/allocations`;
@@ -23,3 +23,7 @@ export const allocate = async (payload: {
   posProvider: POSProviderName;
   quantity: number;
 }): Promise<InventoryAllocation> => fetchPost<InventoryAllocation>(ALLOCATIONS_BASE, {}, payload);
+
+// Real Square sandbox checkout — creates a genuine Order + Payment on Square's servers.
+export const squareCheckout = async (payload: { productId: string; quantity: number }): Promise<SquareCheckoutResult> =>
+  fetchPost<SquareCheckoutResult>(`${BASE}/square/checkout`, {}, payload);

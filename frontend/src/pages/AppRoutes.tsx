@@ -6,6 +6,7 @@ import { Pos } from './Pos';
 import { Inventory } from './Inventory';
 import { ProductDetail } from './ProductDetail';
 import { Sales } from './Sales';
+import { Checkout } from './Checkout';
 
 function AppRoutes() {
   return (
@@ -19,6 +20,7 @@ function AppRoutes() {
             <Route path="/inventory" element={<Inventory />} />
             <Route path="/inventory/:id" element={<ProductDetail />} />
             <Route path="/sales" element={<Sales />} />
+            <Route path="/checkout" element={<Checkout />} />
           </Routes>
         </main>
         <ToastContainer />

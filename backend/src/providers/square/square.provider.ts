@@ -154,6 +154,54 @@ export class SquareProvider implements POSProvider {
     }
   }
 
+  // Creates a real Order + Payment against Square's sandbox (same mechanism as
+  // scripts/square-test-sale.ts, exposed here so the UI can trigger it without a terminal).
+  // Does NOT touch our inventory directly — depletion still only happens when Square's real
+  // webhook for this order arrives, same as any other sale.
+  async createTestSale(
+    ctx: POSConnectionContext,
+    input: { posProductId: string; locationId: string; quantity: number; unitPriceCents?: number },
+  ): Promise<{ orderId: string; paymentId: string; paymentStatus?: string; totalMoney: string }> {
+    const client = requireClient(ctx);
+    try {
+      const orderResponse = await client.ordersApi.createOrder({
+        idempotencyKey: crypto.randomUUID(),
+        order: {
+          locationId: input.locationId,
+          lineItems: [
+            {
+              catalogObjectId: input.posProductId,
+              quantity: String(input.quantity),
+              basePriceMoney: { amount: BigInt(input.unitPriceCents ?? 100), currency: 'USD' },
+            },
+          ],
+        },
+      });
+      const order = orderResponse.result.order;
+      if (!order?.id || !order.totalMoney) {
+        throw AppError.badGateway('Square did not return a usable order.', 'SQUARE_API_ERROR');
+      }
+
+      const paymentResponse = await client.paymentsApi.createPayment({
+        idempotencyKey: crypto.randomUUID(),
+        sourceId: 'cnon:card-nonce-ok',
+        orderId: order.id,
+        amountMoney: order.totalMoney,
+      });
+      const payment = paymentResponse.result.payment;
+
+      return {
+        orderId: order.id,
+        paymentId: payment?.id ?? '',
+        paymentStatus: payment?.status,
+        totalMoney: `${order.totalMoney.amount} ${order.totalMoney.currency}`,
+      };
+    } catch (err) {
+      if (err instanceof AppError) throw err;
+      throw translateSquareError(err, 'Failed to create Square sandbox test sale');
+    }
+  }
+
   async getSales(ctx: POSConnectionContext, since?: Date): Promise<POSSaleRecord[]> {
     // Polling fallback; primary flow uses webhooks.
     const client = requireClient(ctx);

@@ -49,7 +49,7 @@ export function ConnectionCard({ connection, children }: { connection: POSConnec
           <h3 className="text-lg font-semibold text-slate-50">{PROVIDER_LABEL[connection.provider]}</h3>
           {connection.provider === 'toast' && connection.mode === 'mock' && (
             <p className="mt-1 text-xs text-amber-400">
-              Simulated integration — no live Toast API calls are made. See README for why.
+              Simulated integration — no live Toast API calls are made.
             </p>
           )}
         </div>

@@ -80,3 +80,11 @@ export interface ProductDetail {
 export interface ApiErrorBody {
   error: { code: string; message: string; details?: unknown };
 }
+
+export interface SquareCheckoutResult {
+  orderId: string;
+  paymentId: string;
+  paymentStatus?: string;
+  totalMoney: string;
+  productName: string;
+}
