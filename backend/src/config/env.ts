@@ -32,7 +32,6 @@ export const env = {
     mode: optional('TOAST_MODE', 'mock') as 'mock' | 'live',
     clientId: optional('TOAST_CLIENT_ID'),
     clientSecret: optional('TOAST_CLIENT_SECRET'),
-    accessToken: optional('TOAST_ACCESS_TOKEN'),
     restaurantGuid: optional('TOAST_RESTAURANT_GUID'),
     webhookSecret: optional('TOAST_WEBHOOK_SECRET'),
   },
@@ -41,5 +40,6 @@ export const env = {
 /** Square only truly "works" once an access token exists (sandbox token or completed OAuth). */
 export const isSquareConfigured = (): boolean => Boolean(env.square.accessToken);
 
+// Toast auth is client-credentials, not a pre-supplied access token like Square's sandbox shortcut.
 export const isToastLive = (): boolean =>
-  env.toast.mode === 'live' && Boolean(env.toast.accessToken && env.toast.restaurantGuid);
+  env.toast.mode === 'live' && Boolean(env.toast.clientId && env.toast.clientSecret && env.toast.restaurantGuid);

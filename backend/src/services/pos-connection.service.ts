@@ -93,10 +93,7 @@ export const posConnectionService = {
   async connectToast() {
     const live = isToastLive();
     const provider = ProviderFactory.get('toast');
-    const ctx = {
-      connectionId: crypto.randomUUID(),
-      accessToken: live ? env.toast.accessToken : undefined,
-    };
+    const ctx = { connectionId: crypto.randomUUID(), locationId: live ? env.toast.restaurantGuid : undefined };
     const { merchantId, locationId } = await provider.connect(ctx);
     const locations = await provider.getLocations(ctx);
     return posConnectionRepository.upsertConnected('toast', {
@@ -104,7 +101,6 @@ export const posConnectionService = {
       merchantId,
       locationId: locationId ?? locations[0]?.id,
       locationName: locations[0]?.name,
-      accessToken: live ? env.toast.accessToken : undefined,
     });
   },
 
