@@ -194,7 +194,7 @@ export class SquareProvider implements POSProvider {
         orderId: order.id,
         paymentId: payment?.id ?? '',
         paymentStatus: payment?.status,
-        totalMoney: `${order.totalMoney.amount} ${order.totalMoney.currency}`,
+        totalMoney: formatMoney(order.totalMoney.amount),
       };
     } catch (err) {
       if (err instanceof AppError) throw err;
@@ -282,6 +282,11 @@ export class SquareProvider implements POSProvider {
       throw translateSquareError(err, 'Failed to resolve Square order for webhook event');
     }
   }
+}
+
+// Square amounts are minor units (cents) as bigint; this app is USD-only throughout.
+function formatMoney(amount: bigint | number | null | undefined): string {
+  return `$${(Number(amount ?? 0) / 100).toFixed(2)}`;
 }
 
 function requireClient(ctx: POSConnectionContext) {
