@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useState } from 'react';
 import { errorMessage } from '@/utilities/errorMessage';
 import { useAppDispatch } from '@/redux/hooks';
 import { connectProviderThunk, disconnectProviderThunk } from '@/redux/posSlice';
@@ -10,11 +10,10 @@ const PROVIDER_LABEL: Record<string, string> = { square: 'Square', toast: 'Toast
 
 function statusBadge(connection: POSConnectionSummary) {
   if (connection.status !== 'connected') return <Badge variant="neutral">Not Connected</Badge>;
-  if (connection.mode === 'mock') return <Badge variant="warning">Mock Mode</Badge>;
   return <Badge variant="success">Connected (Live)</Badge>;
 }
 
-export function ConnectionCard({ connection, children }: { connection: POSConnectionSummary; children?: ReactNode }) {
+export function ConnectionCard({ connection }: { connection: POSConnectionSummary }) {
   const dispatch = useAppDispatch();
   const [busy, setBusy] = useState(false);
 
@@ -45,14 +44,7 @@ export function ConnectionCard({ connection, children }: { connection: POSConnec
   return (
     <div className="rounded-xl border border-line bg-surface p-6">
       <div className="flex items-start justify-between">
-        <div>
-          <h3 className="text-lg font-semibold text-ink">{PROVIDER_LABEL[connection.provider]}</h3>
-          {connection.provider === 'toast' && connection.mode === 'mock' && (
-            <p className="mt-1 text-xs text-amber-400">
-              Simulated integration — no live Toast API calls are made.
-            </p>
-          )}
-        </div>
+        <h3 className="text-lg font-semibold text-ink">{PROVIDER_LABEL[connection.provider]}</h3>
         {statusBadge(connection)}
       </div>
 
@@ -92,8 +84,6 @@ export function ConnectionCard({ connection, children }: { connection: POSConnec
           </button>
         )}
       </div>
-
-      {children}
     </div>
   );
 }

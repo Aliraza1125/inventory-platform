@@ -5,7 +5,6 @@ import { posConnectionRepository } from '../repositories/posConnection.repositor
 import { transactionRepository } from '../repositories/transaction.repository';
 import { processSaleEvent, SaleProcessingResult } from './sale-event.service';
 import { ProviderFactory } from '../providers/provider.factory';
-import { mockToastProvider } from '../providers/mock/mock-toast.provider';
 import { AppError } from '../utils/AppError';
 import { logger } from '../utils/logger';
 
@@ -80,10 +79,5 @@ export const salesService = {
     }
 
     return result;
-  },
-
-  async simulateMockToastEvent(connectionId: string, posProductId: string, quantity: number) {
-    const event = mockToastProvider.simulateSaleEvent(connectionId, posProductId, quantity);
-    return processSaleEvent(event, 'simulation');
   },
 };

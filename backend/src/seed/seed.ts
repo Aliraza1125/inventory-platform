@@ -1,5 +1,4 @@
-// Seeds demo data via the running backend's own HTTP API (not direct service calls), since
-// MockToastProvider's in-memory catalog only exists inside that server process.
+// Seeds demo data via the running backend's own HTTP API (not direct service calls).
 // Run: npm run dev (one terminal), then npm run seed (another).
 import { env } from '../config/env';
 import { logger } from '../utils/logger';
@@ -7,9 +6,9 @@ import { logger } from '../utils/logger';
 const BASE_URL = `http://localhost:${env.port}/api`;
 
 const DEMO_PRODUCTS = [
-  { name: 'Coca Cola', sku: 'COKE-001', description: '12oz can', quantity: 100 },
-  { name: 'Sparkling Water', sku: 'SPARK-002', description: '16oz bottle', quantity: 60 },
-  { name: 'Cheeseburger', sku: 'BURGER-003', description: 'House cheeseburger', quantity: 40 },
+  { name: 'Coca Cola', sku: 'COKE-001', description: '12oz can', quantity: 100, price: 250 },
+  { name: 'Sparkling Water', sku: 'SPARK-002', description: '16oz bottle', quantity: 60, price: 300 },
+  { name: 'Cheeseburger', sku: 'BURGER-003', description: 'House cheeseburger', quantity: 40, price: 650 },
 ];
 
 async function call<T>(path: string, init?: RequestInit): Promise<T> {
@@ -44,9 +43,6 @@ async function main() {
   }
   const coke = products.find((p) => p.sku === 'COKE-001')!;
 
-  logger.info('Connecting Mock Toast...');
-  await call('/pos/toast/connect', { method: 'POST' });
-
   if (env.square.accessToken) {
     logger.info('SQUARE_ACCESS_TOKEN found — connecting real Square sandbox...');
     try {
@@ -59,12 +55,6 @@ async function main() {
   } else {
     logger.info('No SQUARE_ACCESS_TOKEN set — skipping Square connection. Connect it from the UI once you have one.');
   }
-
-  logger.info('Allocating inventory to Toast...');
-  await call('/allocations', {
-    method: 'POST',
-    body: JSON.stringify({ productId: coke._id, posProvider: 'toast', quantity: 50 }),
-  });
 
   const connections = await call<{ provider: string; status: string }[]>('/pos/connections');
   if (connections.find((c) => c.provider === 'square' && c.status === 'connected')) {

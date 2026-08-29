@@ -1,13 +1,9 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { getSales, simulateSale } from '@/services/sales.service';
-import type { InventoryTransaction, POSProviderName } from '@/types';
+import { getSales } from '@/services/sales.service';
+import type { InventoryTransaction } from '@/types';
 import type { RootState } from './store';
 
 export const fetchSales = createAsyncThunk('sales/fetchSales', getSales);
-export const simulateSaleThunk = createAsyncThunk(
-  'sales/simulate',
-  (payload: { productId: string; posProvider: POSProviderName; quantity: number }) => simulateSale(payload),
-);
 
 interface SalesState {
   transactions: InventoryTransaction[];

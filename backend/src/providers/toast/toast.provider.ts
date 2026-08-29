@@ -4,7 +4,6 @@ import { AppError } from '../../utils/AppError';
 import { logger } from '../../utils/logger';
 import {
   AllocateInventoryInput,
-  CreateProductInput,
   NormalizedSaleEvent,
   POSConnectionContext,
   POSLocation,
@@ -29,7 +28,7 @@ export class ToastProvider implements POSProvider {
     if (!isToastLive()) {
       throw AppError.badRequest(
         'Real Toast integration is not configured. Set TOAST_MODE=live with TOAST_CLIENT_ID, ' +
-          'TOAST_CLIENT_SECRET and TOAST_RESTAURANT_GUID, or use Mock Toast for the demo.',
+          'TOAST_CLIENT_SECRET and TOAST_RESTAURANT_GUID.',
         'TOAST_NOT_CONFIGURED',
       );
     }

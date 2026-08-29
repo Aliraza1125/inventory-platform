@@ -89,9 +89,18 @@ export const posConnectionService = {
     });
   },
 
-  /** Toast: connects in mock mode unless TOAST_MODE=live with credentials is configured. */
+  // Real Toast only — never fakes a "connected" state. Test env keeps using MockToastProvider
+  // (via ProviderFactory) so allocation/webhook/depletion logic stays testable without real
+  // Toast credentials or network calls.
   async connectToast() {
     const live = isToastLive();
+    if (!live && env.nodeEnv !== 'test') {
+      throw AppError.badRequest(
+        'Toast is not configured. Set TOAST_MODE=live with TOAST_CLIENT_ID, TOAST_CLIENT_SECRET ' +
+          'and TOAST_RESTAURANT_GUID — Toast has no demo/mock connect mode.',
+        'TOAST_NOT_CONFIGURED',
+      );
+    }
     const provider = ProviderFactory.get('toast');
     const ctx = { connectionId: crypto.randomUUID(), locationId: live ? env.toast.restaurantGuid : undefined };
     const { merchantId, locationId } = await provider.connect(ctx);
