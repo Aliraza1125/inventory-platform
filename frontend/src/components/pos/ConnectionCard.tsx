@@ -65,7 +65,7 @@ export function ConnectionCard({ connection }: { connection: POSConnectionSummar
         </dl>
       )}
 
-      <div className="mt-5 flex gap-2">
+      <div className="mt-5">
         {connection.status === 'connected' ? (
           <button
             onClick={disconnect}
@@ -74,6 +74,11 @@ export function ConnectionCard({ connection }: { connection: POSConnectionSummar
           >
             Disconnect
           </button>
+        ) : connection.provider === 'toast' ? (
+          <p className="text-xs text-ink-faint">
+            No API access yet — Toast's Partner Integrations program requires business vetting and is only
+            available in the US, Canada, Ireland, and the UK.
+          </p>
         ) : (
           <button
             onClick={connect}
